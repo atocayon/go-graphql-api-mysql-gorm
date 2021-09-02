@@ -13,33 +13,33 @@ import (
 
 
 func (r *mutationResolver) CreateOrder(ctx context.Context, input model.OrderInput) (*model.Order, error) {
-order := model.Order{
+
+
+	order := model.Order{
 		CustomerName: input.CustomerName,
 		OrderAmount: input.OrderAmount,
 		Items: mapItemsFromInput(input.Items),
 	}
 
-	err := r.DB.Create(&order).Error
-    if err != nil {
-        return nil, err
-    }
+	 r.DB.Create(&order)
+
 
 	return &order, nil
 }
 
 func (r *mutationResolver) UpdateOrder(ctx context.Context, orderID int, input model.OrderInput) (*model.Order, error) {
-updateOrder := model.Order{
+	
+	updateOrder := model.Order{
 		ID: orderID,
 		CustomerName: input.CustomerName,
 		OrderAmount: input.OrderAmount,
 		Items: mapItemsFromInput(input.Items),
 	}
 
-	err := r.DB.Save(&updateOrder).Error
-	if err != nil {
-		return nil, err
-	}
-	return &updateOrder, nil}
+	r.DB.Save(&updateOrder)
+
+	return &updateOrder, nil
+}
 
 func (r *mutationResolver) DeleteOrder(ctx context.Context, orderID int) (bool, error) {
 	r.DB.Where("order_id = ?", orderID).Delete(&model.Order{})
@@ -49,11 +49,10 @@ func (r *mutationResolver) DeleteOrder(ctx context.Context, orderID int) (bool, 
 }
 
 func (r *queryResolver) Orders(ctx context.Context) ([]*model.Order, error) {
-	var orders []*model.Order
-	err := r.DB.Set("gorm:auto_preload", true).Find(&orders).Error
-	if err != nil {
-		return nil, err
-	}
+
+	orders := []*model.Order{}
+	r.DB.Set("gorm:auto_preload", true).Find(&orders)
+
 	return orders, nil
 }
 
@@ -68,7 +67,8 @@ type queryResolver struct{ *Resolver }
 
 
 func mapItemsFromInput(itemsInput []*model.ItemInput) []*model.Item {
-	var items []*model.Item
+	 items := []*model.Item{}
+	
 	for _, itemInput := range itemsInput {
 		items = append(items, &model.Item{
 			ProductCode: itemInput.ProductCode,

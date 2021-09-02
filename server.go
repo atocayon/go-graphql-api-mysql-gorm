@@ -17,7 +17,7 @@ import (
 )
 
 var db *gorm.DB;
-const defaultPort = "5050"
+const defaultPort = "8080"
 
 func initDB()  {
 	var err error
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	initDB()
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{DB: db}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
